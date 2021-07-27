@@ -12,4 +12,18 @@ These instructions were adapted from https://blog.doit-intl.com/automatically-la
   c.  Click SAVE.
   d.  Click NEXT to advance from `Configuration` to `Code`.
   e.  Select `Python 3.8`.
-  f.  Click on SOURCE CODE and change it to ZIP Upload.
+  f.  Click on SOURCE CODE and change it to ZIP Upload.  You can [download this repository as a zip file](https://github.com/schmmd/gcp-auto-tag/archive/refs/heads/main.zip).
+  g.  Click DEPLOY.
+
+2.  Go to [Cloud Logging](https://console.cloud.google.com/logs)
+
+  a.  Add the following into QUERY and click RUN QUERY.
+
+      ```
+      resource.type="gce_instance"
+      protoPayload.methodName="beta.compute.instances.insert"
+      operation.first="true"
+      ```
+
+  b.  Under ACTIONS select CREATE SINK.  Name the sink `autotagger-sink` and set the destination
+      to the Pub/Sub topic you created.
