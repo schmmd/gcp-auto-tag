@@ -22,6 +22,19 @@ def tag_instance(instance: str, project: str, zone: str, contact: str):
         print(str(e))
         return {'status': False, instance_disks_list: []}
 
+def tag_disk(disk, project: str, zone: str, contact: str):
+    # tag a volume from the instance volume list
+    logging.info(f'tagging disk {disk}')
+    disk_data = compute.disks().get(project=project, zone=zone, disk=disk).execute()
+    disk_fingerprint = disk_data['labelFingerprint']
+    disk_labels = {'labels': {'contact': contact},
+                    'labelFingerprint': disk_fingerprint}
+    try:
+        compute.disks().setLabels(project=project, zone=zone, resource=disk, body=disk_labels).execute()
+        return True
+    except Exception as e:
+        print(str(e))
+        return False
 
 def hello_pubsub(event, context):
     # parse the pubsub event
@@ -34,6 +47,16 @@ def hello_pubsub(event, context):
     instance_id = pubsub_message['resource']['labels']['instance_id']
     project_id = pubsub_message['resource']['labels']['project_id']
 
-    logging.info(f'new instance created, tagging instance {instance_id}')
     # tag the instance
+    logging.info(f'new instance created, tagging instance {instance_id}')
     instance_tag = tag_instance(instance_id, project_id, instance_zone, user_contact)
+    status = instance_tag['status']
+
+    # tag each disk
+    if instance_tag and instance_tag['instance_disks_list']:
+        for disk in instance_tag['instance_disks_list']:
+            if not tag_disk(disk, project_id, instance_zone, user_contact):
+                status = False
+
+    # return False if an error ocurred
+    return status
