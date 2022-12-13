@@ -16,7 +16,7 @@ These instructions were adapted from https://blog.doit-intl.com/automatically-la
     
     e.  Select `Python 3.8`.
     
-    f.  Click on SOURCE CODE and change it to ZIP Upload.  You can [download this repository as a zip file](https://github.com/schmmd/gcp-auto-tag/archive/refs/heads/main.zip).
+    f.  Click on SOURCE CODE and change it to ZIP Upload.  You can [download this repository as a zip file](https://github.com/schmmd/gcp-auto-tag/raw/main/autotagger.zip).
     
     g.  Click DEPLOY.
 
